@@ -6,7 +6,7 @@ import javax.swing.border.EmptyBorder;
 public class Add_Customer extends JPanel
 {
 	JButton addCustomerBtn, clearCustomerAdd;
-	JTextField firstNameFld,emailFld,  lastNameFld, addressFld, cityFld,postalFld, phoneFld, districtFld;
+	JTextField firstNameFld,emailFld,  lastNameFld, addressFld, cityFld,postalFld, phoneFld, districtFld, countryFld;
 	//constructor
 	public Add_Customer()
 	{
@@ -17,7 +17,7 @@ public class Add_Customer extends JPanel
 			
 		/***********************************************************************************/
 		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new GridLayout(8,2,30,30) );
+		centerPanel.setLayout(new GridLayout(9,2,30,30) );
 		this.add(centerPanel, BorderLayout.CENTER);
 		
 		JLabel firstNameLbl = new JLabel("First Name:");
@@ -44,6 +44,9 @@ public class Add_Customer extends JPanel
 		JLabel postalLbl = new JLabel("Postal code:");		
 		postalLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		
+		JLabel countryLbl = new JLabel("Country:");		
+		countryLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		
 		firstNameFld = new JTextField();
 		lastNameFld = new JTextField();
 		phoneFld  = new JTextField();
@@ -52,6 +55,7 @@ public class Add_Customer extends JPanel
 		postalFld = new JTextField();
 		districtFld = new JTextField();
 		addressFld = new JTextField();
+		countryFld = new JTextField();
 		
 		centerPanel.add(firstNameLbl);
 		centerPanel.add(firstNameFld);
@@ -68,7 +72,9 @@ public class Add_Customer extends JPanel
 		centerPanel.add(districtLbl);
 		centerPanel.add(districtFld);	
 		centerPanel.add(postalLbl);
-		centerPanel.add(postalFld);		
+		centerPanel.add(postalFld);	
+		centerPanel.add(countryLbl);
+		centerPanel.add(countryFld);	
 				
 		/***********************************************************************************/
 		JPanel btnPanel = new JPanel();
