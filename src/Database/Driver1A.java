@@ -1,4 +1,4 @@
-package GUI;
+package Database;
 /**
  * Program Name: Driver1a.java
  * Purpose: shows the steps involved in making a connection to a back end database
@@ -27,7 +27,7 @@ public class Driver1A
 		{
 			//create a Connection object by calling a static method of DriverManager class
 			myConn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/world?useSSL=false","root","password"
+					"jdbc:mysql://localhost:3306/sakila?useSSL=false","root","password"
 					);
 			
 			//Step 2: create a Statement object by calling a method of the Connection object
