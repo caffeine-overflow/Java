@@ -1,7 +1,9 @@
+package GUI;
 /**
- * Program Name: Driver1.java
+ * Program Name: Driver1a.java
  * Purpose: shows the steps involved in making a connection to a back end database
- *          using a JDBC driver and classes from the java.sql package. 
+ *          using a JDBC driver and classes from the java.sql package.
+ *          REVISION: changed column labels to column index numbers in the while loop 
  * Coder: Bill Pulling 
  * Date: Jul 9, 2019
  */
@@ -9,7 +11,7 @@
 //the DYNAMIC DUO
 import java.sql.*;
 import javax.sql.*;
-public class Driver1
+public class Driver1A
 {
 
 	public static void main(String[] args) throws SQLException
@@ -25,7 +27,7 @@ public class Driver1
 		{
 			//create a Connection object by calling a static method of DriverManager class
 			myConn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/demo?useSSL=false","root","password"
+					"jdbc:mysql://localhost:3306/world?useSSL=false","root","password"
 					);
 			
 			//Step 2: create a Statement object by calling a method of the Connection object
@@ -34,17 +36,19 @@ public class Driver1
 			//Step 3: pass in a query string to the Statement object using a method
 			// called executeQuery().
 			//Assign the returned ResultSet object to myRslt.
-			myRslt = myStmt.executeQuery("SELECT * FROM Employees");
+			myRslt = myStmt.executeQuery("SELECT * FROM country");
 			
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			while(myRslt.next())
 			{
-				System.out.println(myRslt.getString("Last_Name") +
-						               ", " + myRslt.getString("first_name") +
-						               ", " + myRslt.getString("email") 
+				//REVISION HERE: changed from column labels to column index numbers
+				// NOTE: COLUMN INDEXING in an SQL TABLE STARTS AT ONE, NOT ZERO
+				// Corresponding column indexes are 2, 3, and 4.
+				System.out.println(myRslt.getString(2) +
+						               ", " + myRslt.getString(3) +
+						               ", " + myRslt.getString(4) 
 						               );//closing bracket for arg list of method println
-			}
-			
+			}//end while			
 					
 		}
 		catch(Exception ex)
