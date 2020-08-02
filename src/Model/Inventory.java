@@ -10,4 +10,33 @@ public class Inventory
 {
 	Film film;
 	Store store;
+	/**
+	 * @return the film
+	 */
+	public Film getFilm()
+	{
+		return film;
+	}
+	/**
+	 * @param film the film to set
+	 */
+	public void setFilm(Film film)
+	{
+		this.film = film;
+	}
+	/**
+	 * @return the store
+	 */
+	public Store getStore()
+	{
+		return store;
+	}
+	/**
+	 * @param store the store to set
+	 */
+	public void setStore(Store store)
+	{
+		this.store = store;
+	}
+	
 }

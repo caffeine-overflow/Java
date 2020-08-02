@@ -10,68 +10,169 @@ package Database;
 
 //the DYNAMIC DUO
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import Model.*;
 import javax.sql.*;
 public class DbConnection
 {
 
-	public static void main(String[] args) throws SQLException
-	{
-		// standard JDBC BOILERPLATE code
-		Connection myConn = null;
-		Statement myStmt = null;
-		ResultSet myRslt = null;
-		
+	Connection myConn = null;
+	Statement myStmt = null;
+	ResultSet myRslt = null;
 	
-		//Step 1: Use a try-catch to attempt the database connection
-		try
-		{
-			//create a Connection object by calling a static method of DriverManager class
-			myConn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/sakila?useSSL=false","root","password"
-					);
-			
-			//Step 2: create a Statement object by calling a method of the Connection object
-			myStmt = myConn.createStatement();
-			
-			//Step 3: pass in a query string to the Statement object using a method
-			// called executeQuery().
-			//Assign the returned ResultSet object to myRslt.
-			myRslt = myStmt.executeQuery("SELECT * FROM country");
-			
+	private DbConnection() {
+		
+	}
+	
+	private void getConnection() throws SQLException {
+	//create a Connection object by calling a static method of DriverManager class
+		myConn = DriverManager.getConnection(
+				"jdbc:mysql://localhost:3306/sakila?useSSL=false","root","password"
+				);
+		
+		//Step 2: create a Statement object by calling a method of the Connection object
+		myStmt = myConn.createStatement();
+	}
+	
+	private void closeConnection() throws SQLException {
+		if(myRslt != null)
+			myRslt.close();
+		if(myStmt != null)
+			myStmt.close();
+		if(myConn != null)
+			myConn.close();		
+	}
+	
+	public List<Address> getAllAddress() throws SQLException{
+		List<Address> allAddress = new ArrayList<Address>();
+		try {
+			getConnection();
+		  myRslt = myStmt.executeQuery("Select "
+		  		+ "addr.address, addr.district, c.city, co.country, addr.postal_code, addr.phone "
+		  		+ "from address addr inner join city c on addr.city_id=c.city_id "
+		  		+ "inner join country co on c.country_id = co.country_id");
+		  
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			while(myRslt.next())
 			{
-				//REVISION HERE: changed from column labels to column index numbers
-				// NOTE: COLUMN INDEXING in an SQL TABLE STARTS AT ONE, NOT ZERO
-				// Corresponding column indexes are 2, 3, and 4.
-				System.out.println(myRslt.getString(2) +
-						               ", " + myRslt.getString(3) +
-						               ", " + myRslt.getString(4) 
-						               );//closing bracket for arg list of method println
-			}//end while			
-					
+				Address address = new Address();
+				address.setStreetAddress(myRslt.getString("address"));
+				address.setDistrict(myRslt.getString("district"));
+				address.setCity(myRslt.getString("city"));
+				address.setCountry(myRslt.getString("country"));
+				address.setPhone(myRslt.getString("phone"));
+				address.setPostalCode(myRslt.getString("postal_code"));
+				allAddress.add(address);
+			}
+			closeConnection();
+			return allAddress;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
 		}
 		catch(Exception ex)
 		{
-			System.out.println("Exception caught, message is " + ex.getMessage());
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
 		}
-		
-		//DO THE finally block!
 		finally
 		{
-			//put your clean up code here to close the objects. Standard practice is to
-			//close them in REVERSE ORDER of creation
-			if(myRslt != null)
-				myRslt.close();
-			if(myStmt != null)
-				myStmt.close();
-			if(myConn != null)
-				myConn.close();			
+			closeConnection();
 		}
+		return null;
 		
-		System.out.println("**\nEND OF PROGRAM");		
-
-	}//end main
-
+	}
+	
+	
+	public List<String> getAllCountry() throws SQLException{
+		List<String> allCountry = new ArrayList<String>();
+		try {
+			getConnection();
+		  myRslt = myStmt.executeQuery("Select country from country");
+		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				allCountry.add(myRslt.getString("country"));
+			}
+			closeConnection();
+			return allCountry;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+		
+	}
+	
+	public List<String> getAllDistrictInCountry(String countryName) throws SQLException{
+		List<String> allDistrict = new ArrayList<String>();
+		try {
+			getConnection();
+		  myRslt = myStmt.executeQuery("Select distinct district from address inner join city "
+		  		+ "on address.city_id=city.city_id inner join country "
+		  		+ "on city.country_id=country.country_id and country = '"+countryName+"'");
+		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				allDistrict.add(myRslt.getString("country"));
+			}
+			closeConnection();
+			return allDistrict;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+		
+	}
+	
+	public List<String> getAllCitiesInDistrict(String districtName) throws SQLException{
+		List<String> allCities = new ArrayList<String>();
+		try {
+			getConnection();
+		  myRslt = myStmt.executeQuery("Select distinct city from address inner join city "
+		  		+ "on address.city_id=city.city_id and district = '"+districtName+"'");
+		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				allCities.add(myRslt.getString("country"));
+			}
+			closeConnection();
+			return allCities;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+		
+	}
 }
 //end class
