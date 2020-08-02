@@ -1,3 +1,4 @@
+package GUI;
 /**
  * Program Name: IntroPanel.java
  * Purpose: a class to construct a JPanel that will later be called in another 
@@ -11,10 +12,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Reports extends JPanel
+public class Add_Rental extends JPanel
 {
 	//constructor
-	public Reports()
+	public Add_Rental()
 	{
 		super();//courtesy call
 		this.setBackground(Color.GREEN);
