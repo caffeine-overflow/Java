@@ -65,17 +65,17 @@ public class Add_Customer extends JPanel
 		centerPanel.add(phoneLbl);
 		centerPanel.add(phoneFld);	
 		centerPanel.add(emailLbl);
-		centerPanel.add(emailFld);
-		centerPanel.add(addressLbl);
-		centerPanel.add(addressFld);		
-		centerPanel.add(cityLbl);
-		centerPanel.add(cityFld);	
-		centerPanel.add(districtLbl);
-		centerPanel.add(districtFld);	
-		centerPanel.add(postalLbl);
-		centerPanel.add(postalFld);	
+		centerPanel.add(emailFld);	
 		centerPanel.add(countryLbl);
 		centerPanel.add(countryFld);	
+		centerPanel.add(districtLbl);
+		centerPanel.add(districtFld);	
+		centerPanel.add(cityLbl);
+		centerPanel.add(cityFld);
+		centerPanel.add(addressLbl);
+		centerPanel.add(addressFld);				
+		centerPanel.add(postalLbl);
+		centerPanel.add(postalFld);	
 				
 		/***********************************************************************************/
 		JPanel btnPanel = new JPanel();
