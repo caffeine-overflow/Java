@@ -21,16 +21,14 @@ public class DbConnection
 	Connection myConn = null;
 	Statement myStmt = null;
 	ResultSet myRslt = null;
-
+	final String CONNECTION_STRING = "jdbc:mysql://localhost:3306/sakila?useSSL=false";
 	private DbConnection() {
 
 	}
 
 	private void getConnection() throws SQLException {
 		//create a Connection object by calling a static method of DriverManager class
-		myConn = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/sakila?useSSL=false","root","password"
-				);
+		myConn = DriverManager.getConnection(CONNECTION_STRING,"root","password");
 
 		//Step 2: create a Statement object by calling a method of the Connection object
 		myStmt = myConn.createStatement();
@@ -177,14 +175,13 @@ public class DbConnection
 	}
 
 	public int getCityIdByName(String city) throws SQLException {
+		int cityID=-1;
 		try {
 			getConnection();
 			myRslt = myStmt.executeQuery("Select distinct city_id from city where city = '"+city+"'");		  
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			myRslt.next();
-			int cityID= myRslt.getInt("city_id");
-			closeConnection();
-			return cityID;
+			cityID= myRslt.getInt("city_id");
 		}
 		catch(Exception ex)
 		{
@@ -194,7 +191,7 @@ public class DbConnection
 		{
 			closeConnection();
 		}
-		return -1;
+		return cityID;
 	}
 
 
@@ -306,6 +303,62 @@ public class DbConnection
 			closeConnection();
 		}
 		return -1;
+	}
+	
+	public int getCategoryIdByName(String name) throws SQLException {
+		int categoryID=-1;
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select distinct category_id from category where name = '"+name+"'");		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			myRslt.next();
+			categoryID= myRslt.getInt("category_id");
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return categoryID;
+	}
+	
+	public boolean insertFilmActors(Film film, ArrayList<Actor> actors) throws SQLException {
+		boolean returnValue=false;
+		Connection tempCon = DriverManager.getConnection(CONNECTION_STRING,"root","password");
+
+		//Step 2: create a Statement object by calling a method of the Connection object
+		Statement tempStmt = tempCon.createStatement();
+		try {
+			
+			tempCon.setAutoCommit(false);
+			int filmID = insertFilm(film);
+			tempStmt.executeUpdate("INSERT INTO film_category (category_id, film_id) "
+					+ "VALUES ('"+getCategoryIdByName(film.getCategory())+"','" +filmID+"')");
+			tempStmt.executeUpdate("INSERT INTO inventory (film_id, store_id) "
+					+ "VALUES ('"+filmID+"',1)");
+			for(Actor actor:actors) {
+				tempStmt.executeUpdate("INSERT INTO film_actor (actor_id, film_id) "
+						+ "VALUES ('"+insertActor(actor)+"','" +filmID+"')");
+			}
+			tempCon.commit();
+			returnValue=true;
+		}
+		catch(Exception ex)
+		{
+			tempCon.rollback();
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			if(tempStmt != null)
+				tempStmt.close();
+			if(tempCon != null)
+				tempCon.close();	
+		}
+		return returnValue;
 	}
 	
 }
