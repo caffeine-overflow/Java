@@ -45,14 +45,15 @@ public class DbConnection
 			myConn.close();		
 	}
 	
-	public List<Address> getAllAddress() throws SQLException{
+	public List<Address> getAllAddressForCityAndDistrict(String city,String district) throws SQLException{
 		List<Address> allAddress = new ArrayList<Address>();
 		try {
 			getConnection();
 		  myRslt = myStmt.executeQuery("Select "
-		  		+ "addr.address, addr.district, c.city, co.country, addr.postal_code, addr.phone "
+		  		+ "addr.address, addr.district, c.city, addr.postal_code, addr.phone "
 		  		+ "from address addr inner join city c on addr.city_id=c.city_id "
-		  		+ "inner join country co on c.country_id = co.country_id");
+		  		+ "and c.city = '"+city+"' "
+		  		+ "and addr.district = '"+district+"'");
 		  
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			while(myRslt.next())
