@@ -230,5 +230,30 @@ public class DbConnection
 		return false;
 
 	}
+	
+	public boolean insertActor(Actor actor) throws SQLException {
+
+		try {
+			getConnection();			
+			myStmt.executeUpdate("INSERT INTO actor (first_name, last_name) "
+					+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')");
+			closeConnection();
+			return true;
+		}
+		catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return false;
+
+	}
 }
 //end class
