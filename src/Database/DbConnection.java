@@ -199,14 +199,17 @@ public class DbConnection
 
 
 	public boolean insertCustomer(Customer customer) throws SQLException {
-
 		try {
 			Address address = customer.getAddress();
 			int cityID = getCityIdByName(address.getCity());
 			getConnection();
 			myConn.setAutoCommit(false);
-			int addressID = myStmt.executeUpdate("INSERT INTO address (address, district, city_id, postal_code, phone) "
-					+ "VALUES ('"+address.getStreetAddress()+"','" +address.getDistrict()+"','" +cityID+"','" +address.getPostalCode()+"','" +address.getPhone()+"')");
+			myStmt.executeUpdate("INSERT INTO address (address, district, city_id, postal_code, phone) "
+					+ "VALUES ('"+address.getStreetAddress()+"','" +address.getDistrict()+"','" +cityID+"','" +address.getPostalCode()+"','" +address.getPhone()+"')",
+					Statement.RETURN_GENERATED_KEYS);
+			myRslt = myStmt.getGeneratedKeys();
+			myRslt.next();
+			int addressID = myRslt.getInt(1);
 			myStmt.executeUpdate("INSERT INTO customer (store_id, first_name, last_name, email, address_id, active) "
 					+ "VALUES (1,'"+customer.getFirstName()+"','" +customer.getLastName()+"','" +customer.getEmail()+"','" +addressID+"','" +customer.getActive()+"')");
 			myConn.commit();
@@ -231,14 +234,14 @@ public class DbConnection
 
 	}
 	
-	public boolean insertActor(Actor actor) throws SQLException {
-
+	public int insertActor(Actor actor) throws SQLException {
+		int returnID=-1;
 		try {
 			getConnection();			
 			myStmt.executeUpdate("INSERT INTO actor (first_name, last_name) "
-					+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')");
-			closeConnection();
-			return true;
+					+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')", Statement.RETURN_GENERATED_KEYS);
+			myRslt = myStmt.getGeneratedKeys();
+			if(myRslt.next()) returnID = myRslt.getInt(1);
 		}
 		catch(SQLException e1)
 		{
@@ -252,8 +255,58 @@ public class DbConnection
 		{
 			closeConnection();
 		}
-		return false;
+		return returnID;
 
 	}
+	
+	public int insertFilm(Film film) throws SQLException {
+		int returnID=-1;
+		try {
+			int langID=getLanguageIdByName(film.getLanguage());
+			getConnection();			
+			myStmt.executeUpdate("INSERT INTO film (title, description,release_year,language_id,rental_guration,length,special_features) "
+					+ "VALUES ('"+film.getTitle()+"','" +film.getDescription()+"','" +film.getRelease_year()+"','" +langID+
+					"','" +film.getRental_duration()+"','" +film.getLength()+"','" +film.getSpecial_features()+"')" , Statement.RETURN_GENERATED_KEYS);
+			myRslt = myStmt.getGeneratedKeys();
+			if(myRslt.next()) returnID = myRslt.getInt(1);
+		}
+		catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return returnID;
+
+	}
+	
+	
+	public int getLanguageIdByName(String language) throws SQLException {
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select distinct language_id from language where name = '"+language+"'");		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			myRslt.next();
+			int languageID= myRslt.getInt("language_id");
+			closeConnection();
+			return languageID;
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return -1;
+	}
+	
 }
 //end class
