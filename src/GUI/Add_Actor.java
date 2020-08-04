@@ -17,6 +17,7 @@ import javax.swing.table.TableModel;
 
 import Database.DbConnection;
 import Model.Actor;
+import static Validator.SakilaValidator.*;
 
 public class Add_Actor extends JPanel {
 	JButton addActorBtn, clearActorBtn;
@@ -70,16 +71,22 @@ public class Add_Actor extends JPanel {
 		public void actionPerformed(ActionEvent e)
 		{
 			if(e.getActionCommand().equals("Add"))
-			{
-				Actor actor = new Actor();
-				actor.setFirstName(actorFirstNameFld.getText());
-				actor.setLastName(actorLastNameFld.getText());
-				try
-				{
-					new DbConnection().insertActor(actor);
-				} catch (SQLException e1)
-				{
-					System.out.println("SQL Exeption, message is: " + e1.getMessage());
+			{			  
+				if(areTextFieldValid(actorFirstNameFld,actorLastNameFld)) {
+					Actor actor = new Actor();
+					actor.setFirstName(actorFirstNameFld.getText());
+					actor.setLastName(actorLastNameFld.getText());
+					try
+					{
+						new DbConnection().insertActor(actor);
+					
+					} catch (SQLException e1)
+					{
+						System.out.println("SQL Exeption, message is: " + e1.getMessage());
+					}
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "Please enter the value in all required fields", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			}
