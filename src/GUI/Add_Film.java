@@ -5,7 +5,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class Add_Film extends JPanel {
-	JButton addFilmBtn, clearFilmAdd;
+	JButton addFilmBtn, clearFilmAdd, addActorBtn;
 	JTextField titleFld, releaseFld, lengthFld, replacementCostFld, ratingFld;
 	JTextArea featuresFld, descriptionFld;
 	JComboBox durationFld,rateFld, categoryFld, languageFld;
@@ -19,7 +19,7 @@ public class Add_Film extends JPanel {
 
 		/***********************************************************************************/
 		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new GridLayout(11, 2, 10, 10));
+		centerPanel.setLayout(new GridLayout(12, 2, 10, 10));
 		this.add(centerPanel, BorderLayout.CENTER);
 
 		JLabel titleLbl = new JLabel("Title:");
@@ -54,6 +54,9 @@ public class Add_Film extends JPanel {
 		
 		JLabel featuresLbl = new JLabel("Desription:");
 		featuresLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel addActorLbl = new JLabel(" ");
+		addActorLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 
 		titleFld = new JTextField();
 		releaseFld = new JTextField();
@@ -70,7 +73,8 @@ public class Add_Film extends JPanel {
 		ratingFld = new JTextField();
 		featuresFld = new JTextArea();
 		descriptionFld = new JTextArea();
-
+		addActorBtn = new JButton("Add Actor");
+		
 		centerPanel.add(titleLbl);
 		centerPanel.add(titleFld);
 		centerPanel.add(categoryLbl);
@@ -93,6 +97,8 @@ public class Add_Film extends JPanel {
 		centerPanel.add(featuresFld);
 		centerPanel.add(descriptionLbl);
 		centerPanel.add(descriptionFld);
+		centerPanel.add(addActorLbl);
+		centerPanel.add(addActorBtn);
 
 		/***********************************************************************************/
 		JPanel btnPanel = new JPanel();
@@ -106,6 +112,30 @@ public class Add_Film extends JPanel {
 
 		btnPanel.add(addFilmBtn);
 		btnPanel.add(clearFilmAdd);
-
+		
+		addActorBtn.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+   
+            	JTextField actorFirstName = new JTextField();
+            	JTextField actorLastName = new JTextField();
+            	
+            	Object[] message = {
+            	    "First Name:", actorFirstName,
+            	    "Last Name:", actorLastName,
+            	};
+            	
+            	Object[] options = {"Cancel","Save"};
+                       
+            	int option = JOptionPane.showConfirmDialog(centerPanel, message, "Add Actor", JOptionPane.OK_CANCEL_OPTION);
+            	if (option == JOptionPane.OK_OPTION)
+            	{
+            	    String value1 = actorFirstName.getText();
+            	    String value2 = actorLastName.getText();
+            	    
+            	    System.out.println(value1);
+            	}
+            }
+        });
 	}
 }
