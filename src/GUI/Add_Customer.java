@@ -7,7 +7,8 @@ import javax.swing.border.EmptyBorder;
 public class Add_Customer extends JPanel
 {
 	JButton addCustomerBtn, clearCustomerAdd;
-	JTextField firstNameFld,emailFld,  lastNameFld, addressFld, cityFld,postalFld, phoneFld, districtFld, countryFld;
+	JTextField firstNameFld,emailFld,  lastNameFld, addressFld,postalFld, phoneFld;
+	JComboBox cityFld,districtFld,countryFld ;
 	//constructor
 	public Add_Customer()
 	{
@@ -52,11 +53,12 @@ public class Add_Customer extends JPanel
 		lastNameFld = new JTextField();
 		phoneFld  = new JTextField();
 		emailFld = new JTextField();
-		cityFld = new JTextField();
+		String[] arr = { "gatorade", "me"};
+		cityFld = new JComboBox(arr);
 		postalFld = new JTextField();
-		districtFld = new JTextField();
+		districtFld = new JComboBox(arr);
 		addressFld = new JTextField();
-		countryFld = new JTextField();
+		countryFld = new JComboBox(arr);
 		
 		centerPanel.add(firstNameLbl);
 		centerPanel.add(firstNameFld);
