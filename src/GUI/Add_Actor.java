@@ -1,8 +1,22 @@
 package GUI;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
+
+import Database.DbConnection;
+import Model.Actor;
 
 public class Add_Actor extends JPanel {
 	JButton addActorBtn, clearActorBtn;
@@ -42,8 +56,35 @@ public class Add_Actor extends JPanel {
 
 		addActorBtn = new JButton("Add");
 		clearActorBtn = new JButton("Clear");
-
+		AddActorPage aap = new AddActorPage();
+		addActorBtn.addActionListener(aap);
 		btnPanel.add(addActorBtn);
 		btnPanel.add(clearActorBtn);
 	}
+	
+	
+//create inner class listener object
+	private class AddActorPage implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			if(e.getActionCommand().equals("Add"))
+			{
+				Actor actor = new Actor();
+				actor.setFirstName(actorFirstNameFld.getText());
+				actor.setLastName(actorLastNameFld.getText());
+				try
+				{
+					new DbConnection().insertActor(actor);
+				} catch (SQLException e1)
+				{
+					System.out.println("SQL Exeption, message is: " + e1.getMessage());
+				}
+				
+			}
+			
+		}//end actionPerformed()
+	
+	}//end inner class
 }

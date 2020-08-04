@@ -22,7 +22,7 @@ public class DbConnection
 	Statement myStmt = null;
 	ResultSet myRslt = null;
 	final String CONNECTION_STRING = "jdbc:mysql://localhost:3306/sakila?useSSL=false";
-	private DbConnection() {
+	public DbConnection() {
 
 	}
 
