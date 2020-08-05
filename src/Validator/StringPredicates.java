@@ -6,10 +6,13 @@
  */
 package Validator;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.mysql.cj.util.StringUtils;
 
@@ -23,7 +26,8 @@ public class StringPredicates
 			@Override
 			public List<String> getErrors(){
 				return new ArrayList<>(
-					Arrays.asList(String.format("The value entered is not in the list ")));
+					Arrays.asList(String.format("The value must be one of [%s]",values.stream()
+              .collect(Collectors.joining(", ")))));
 				}
 
 			@Override
@@ -34,6 +38,23 @@ public class StringPredicates
 		};
 	}
 		
+	public static ValidationPredicate<List<?>> hasDuplicateValues(){
+		return new ValidationPredicate<List<?>>() {
+			@Override
+			public List<String> getErrors(){
+				return new ArrayList<>(
+					Arrays.asList(String.format("The List contains duplicate values ")));
+				}
+
+			@Override
+			public boolean test(List<?> t)
+			{
+				return t.size()==new HashSet<>(t).size();
+			}			
+		};
+	}
+	
+	
 	public static ValidationPredicate<String> followsRegesPatternOf(final Pattern pattern){
 		return new ValidationPredicate<String>() {
 			@Override
@@ -46,6 +67,38 @@ public class StringPredicates
 			public boolean test(final String value)
 			{
 				return pattern.matcher(value).matches();
+			}			
+		};
+	}
+	
+	public static ValidationPredicate<String> isValidNumber(){
+		return new ValidationPredicate<String>() {
+			@Override
+			public List<String> getErrors(){
+				return new ArrayList<>(
+					Arrays.asList("The value is not a valid number"));
+				}
+
+			@Override
+			public boolean test(final String value)
+			{
+				return Pattern.compile("^\\d+$").matcher(value).matches();
+			}			
+		};
+	}
+	
+	public static ValidationPredicate<String> isValidDouble(){
+		return new ValidationPredicate<String>() {
+			@Override
+			public List<String> getErrors(){
+				return new ArrayList<>(
+					Arrays.asList("The value is not a valid floating point"));
+				}
+			
+			@Override
+			public boolean test(final String value)
+			{
+				return Pattern.compile("\\d+\\.{0,1}(\\d+)?").matcher(value).matches();
 			}			
 		};
 	}
@@ -126,6 +179,40 @@ public class StringPredicates
 			public boolean test(final String value)
 			{
 				return value.length()>=min && value.length()<=max;
+			}			
+		};
+	}
+	
+	public static ValidationPredicate<String> valueIsBetween(final int min,final int max){
+		return new ValidationPredicate<String>() {
+			@Override
+			public List<String> getErrors(){
+				return new ArrayList<>(
+					Arrays.asList(String.format(" value must be between %d and %d",min,max)));
+				}
+
+			@Override
+			public boolean test(final String value)
+			{
+				return Integer.parseInt(value)>=min && Integer.parseInt(value)<=max;
+			}			
+		};
+	}
+	
+	public static ValidationPredicate<String> valueIsBetween(final double min,final double max){
+		return new ValidationPredicate<String>() {
+			@Override
+			public List<String> getErrors(){
+				return new ArrayList<>(
+					Arrays.asList(String.format(" value must be between %.2f and %.2f",min,max)));
+				}
+
+			@Override
+			public boolean test(final String value)
+			{
+				boolean returnValue=Double.parseDouble(value)>=min &&  Double.parseDouble(value)<=max;
+				System.out.println(returnValue);
+				return returnValue;
 			}			
 		};
 	}

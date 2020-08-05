@@ -114,6 +114,64 @@ public class DbConnection
 
 	}
 
+	public Vector<String> getAllCategory() throws SQLException{
+		Vector<String> categories = new Vector<String>();
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select name from category");
+
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				categories.add(myRslt.getString("name"));
+			}
+			closeConnection();
+			return categories;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+	}
+	
+	
+	public Vector<String> getAllLanguages() throws SQLException{
+		Vector<String> languages = new Vector<String>();
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select name from language");
+
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				languages.add(myRslt.getString("name"));
+			}
+			closeConnection();
+			return languages;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+	}
+	
+	
 	public Vector<String> getAllDistrictInCountry(String countryName) throws SQLException{
 		Vector<String> allDistrict = new Vector<String>();
 		try {
@@ -241,28 +299,9 @@ public class DbConnection
 		try {
 			getConnection();	
 			myRslt = myStmt.executeQuery("SELECT * FROM actor where first_name = '"+actor.getFirstName()+"' and last_name = '" +actor.getLastName()+"'");
-			if(myRslt.next()) throw new SQLException("Actor already exist in the database");
+			if(myRslt.next()) return -2;
 			myStmt.executeUpdate("INSERT INTO actor (first_name, last_name) "
 					+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')", Statement.RETURN_GENERATED_KEYS);
-			myRslt = myStmt.getGeneratedKeys();
-			if(myRslt.next()) returnID = myRslt.getInt(1);
-		}
-		finally
-		{
-			closeConnection();
-		}
-		return returnID;
-
-	}
-	
-	public int insertFilm(Film film) throws SQLException {
-		int returnID=-1;
-		try {
-			int langID=getLanguageIdByName(film.getLanguage());
-			getConnection();			
-			myStmt.executeUpdate("INSERT INTO film (title, description,release_year,language_id,rental_guration,length,special_features) "
-					+ "VALUES ('"+film.getTitle()+"','" +film.getDescription()+"','" +film.getRelease_year()+"','" +langID+
-					"','" +film.getRental_duration()+"','" +film.getLength()+"','" +film.getSpecial_features()+"')" , Statement.RETURN_GENERATED_KEYS);
 			myRslt = myStmt.getGeneratedKeys();
 			if(myRslt.next()) returnID = myRslt.getInt(1);
 		}
@@ -282,82 +321,108 @@ public class DbConnection
 
 	}
 	
-	
-	public int getLanguageIdByName(String language) throws SQLException {
-		try {
-			getConnection();
-			myRslt = myStmt.executeQuery("Select distinct language_id from language where name = '"+language+"'");		  
-			//Step 4: PROCESS the myRslt result set object using a while loop
-			myRslt.next();
-			int languageID= myRslt.getInt("language_id");
-			closeConnection();
-			return languageID;
-		}
-		catch(Exception ex)
-		{
-			System.out.println("Some other Exception, message is: " + ex.getMessage());
-		}
-		finally
-		{
-			closeConnection();
-		}
-		return -1;
-	}
-	
-	public int getCategoryIdByName(String name) throws SQLException {
-		int categoryID=-1;
-		try {
-			getConnection();
-			myRslt = myStmt.executeQuery("Select distinct category_id from category where name = '"+name+"'");		  
-			//Step 4: PROCESS the myRslt result set object using a while loop
-			myRslt.next();
-			categoryID= myRslt.getInt("category_id");
-		}
-		catch(Exception ex)
-		{
-			System.out.println("Some other Exception, message is: " + ex.getMessage());
-		}
-		finally
-		{
-			closeConnection();
-		}
-		return categoryID;
-	}
-	
-	public boolean insertFilmActors(Film film, ArrayList<Actor> actors) throws SQLException {
+	public boolean insertFilmWithActors(Film film, ArrayList<Actor> actors) throws SQLException {
 		boolean returnValue=false;
-		Connection tempCon = DriverManager.getConnection(CONNECTION_STRING,"root","password");
-
-		//Step 2: create a Statement object by calling a method of the Connection object
-		Statement tempStmt = tempCon.createStatement();
 		try {
-			
-			tempCon.setAutoCommit(false);
-			int filmID = insertFilm(film);
-			tempStmt.executeUpdate("INSERT INTO film_category (category_id, film_id) "
-					+ "VALUES ('"+getCategoryIdByName(film.getCategory())+"','" +filmID+"')");
-			tempStmt.executeUpdate("INSERT INTO inventory (film_id, store_id) "
-					+ "VALUES ('"+filmID+"',1)");
+			int langID=getLanguageIdByName(film.getLanguage());
+			int catID=getCategoryIdByName(film.getCategory());
+			int filmID=-1;
+			getConnection();	
+			myConn.setAutoCommit(false);
+			myStmt.executeUpdate("INSERT INTO film (title, description,release_year,language_id,rental_duration,length,special_features) "
+					+ "VALUES ('"+film.getTitle()+"','" +film.getDescription()+"'," +film.getRelease_year()+"," +langID+
+					"," +film.getRental_duration()+"," +film.getLength()+",'" +film.getSpecial_features()+"')" , Statement.RETURN_GENERATED_KEYS);
+			myRslt = myStmt.getGeneratedKeys();
+			if(myRslt.next()) filmID = myRslt.getInt(1);
+			myStmt.executeUpdate("INSERT INTO inventory (film_id, store_id) "
+					+ "VALUES ("+filmID+",1)");
+			myStmt.executeUpdate("INSERT INTO film_category (film_id, category_id) "
+					+ "VALUES ("+filmID+","+catID+")");
 			for(Actor actor:actors) {
-				tempStmt.executeUpdate("INSERT INTO film_actor (actor_id, film_id) "
-						+ "VALUES ('"+insertActor(actor)+"','" +filmID+"')");
+				int actorId=-1;
+				myRslt = myStmt.executeQuery("SELECT * FROM actor where first_name = '"+actor.getFirstName()+"' and last_name = '" +actor.getLastName()+"'");
+				if(myRslt.next()) {
+					actorId = myRslt.getInt("actor_id");
+				}
+				else {
+					myStmt.executeUpdate("INSERT INTO actor (first_name, last_name) "
+							+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')", Statement.RETURN_GENERATED_KEYS);
+					myRslt = myStmt.getGeneratedKeys();
+					if(myRslt.next()) actorId = myRslt.getInt(1);
+				}				
+				myStmt.executeUpdate("INSERT INTO film_actor (actor_id, film_id) "
+						+ "VALUES ('"+actorId+"','" +filmID+"')");				
 			}
-			tempCon.commit();
+			myConn.commit();
 			returnValue=true;
 		}
 		catch(Exception ex)
 		{
-			tempCon.rollback();
+			myConn.rollback();
 			System.out.println("Some other Exception, message is: " + ex.getMessage());
 		}
 		finally
 		{
-			if(tempStmt != null)
-				tempStmt.close();
-			if(tempCon != null)
-				tempCon.close();	
+			closeConnection();
 		}
 		return returnValue;
+
+	}
+	
+	
+	public int getLanguageIdByName(String language) throws SQLException {
+		int returnID=-1;
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select distinct language_id from language where name = '"+language+"'");		 
+			//Step 4: PROCESS the myRslt result set object using a while loop			
+			if(myRslt.next()) {
+				returnID= myRslt.getInt("language_id");
+			}
+			else{
+				myStmt.executeUpdate("INSERT INTO language (name) "
+						+ "VALUES ('"+language+"')", Statement.RETURN_GENERATED_KEYS);
+				myRslt = myStmt.getGeneratedKeys();
+				if(myRslt.next()) returnID = myRslt.getInt(1);
+			}
+			closeConnection();
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return returnID;
+	}
+	
+	public int getCategoryIdByName(String name) throws SQLException {
+		int returnID=-1;
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select distinct category_id from category where name = '"+name+"'");		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			if(myRslt.next()) {
+				returnID= myRslt.getInt("category_id");
+			}
+			else{
+				myStmt.executeUpdate("INSERT INTO language (name) "
+						+ "VALUES ('"+name+"')", Statement.RETURN_GENERATED_KEYS);
+				myRslt = myStmt.getGeneratedKeys();
+				if(myRslt.next()) returnID = myRslt.getInt(1);
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return returnID;
 	}
 	
 }

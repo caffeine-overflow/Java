@@ -176,9 +176,11 @@ public class Add_Customer extends JPanel
 		public void actionPerformed(ActionEvent e)
 		{
 			if(e.getActionCommand().equals("Add"))
-			{			  
-				if(areTextFieldValid(firstNameFld,emailFld,  lastNameFld, addressFld,postalFld,phoneFld) &&
-						areComboBoxValid(cityFld,districtFld,countryFld)) {
+			{	
+				boolean validTextFields = areTextFieldValid(firstNameFld,emailFld,  lastNameFld, addressFld,postalFld,phoneFld);
+				boolean validComboBoxes = areComboBoxValid(cityFld,districtFld,countryFld);
+				
+				if( validTextFields && validComboBoxes	) {
 					Customer customer = getCustomer();
 					try
 					{

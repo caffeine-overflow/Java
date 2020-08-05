@@ -5,12 +5,17 @@ public class Film
 	String title;
 	String description;
 	int release_year;
+	String stringRelease_year;
 	String language;
 	String category;
 	int rental_duration;
 	float rental_rate;
 	int length;
 	float replacement_cost;
+	String stringRental_duration;
+	String stringRental_rate;
+	String stringLength;
+	String stringReplacement_cost;
 	String rating;
 	String special_features;
 	/**
@@ -166,6 +171,76 @@ public class Film
 	public void setSpecial_features(String special_features)
 	{
 		this.special_features = special_features;
+	}
+	/**
+	 * @return the stringRelease_year
+	 */
+	public String getStringRelease_year()
+	{
+		return stringRelease_year;
+	}
+	/**
+	 * @param stringRelease_year the stringRelease_year to set
+	 */
+	public void setStringRelease_year(String stringRelease_year)
+	{
+		this.stringRelease_year = stringRelease_year;
+	}
+	/**
+	 * @return the stringRental_duration
+	 */
+	public String getStringRental_duration()
+	{
+		return stringRental_duration;
+	}
+	/**
+	 * @param stringRental_duration the stringRental_duration to set
+	 */
+	public void setStringRental_duration(String stringRental_duration)
+	{
+		this.stringRental_duration = stringRental_duration;
+	}
+	/**
+	 * @return the stringRental_rate
+	 */
+	public String getStringRental_rate()
+	{
+		return stringRental_rate;
+	}
+	/**
+	 * @param stringRental_rate the stringRental_rate to set
+	 */
+	public void setStringRental_rate(String stringRental_rate)
+	{
+		this.stringRental_rate = stringRental_rate;
+	}
+	/**
+	 * @return the stringLength
+	 */
+	public String getStringLength()
+	{
+		return stringLength;
+	}
+	/**
+	 * @param stringLength the stringLength to set
+	 */
+	public void setStringLength(String stringLength)
+	{
+		this.stringLength = stringLength;
+	}
+	/**
+	 * @return the stringReplacement_cost
+	 */
+	public String getStringReplacement_cost()
+	{
+		return stringReplacement_cost;
+	}
+	/**
+	 * @param stringReplacement_cost the stringReplacement_cost to set
+	 */
+	public void setStringReplacement_cost(String stringReplacement_cost)
+	{
+		this.stringReplacement_cost = stringReplacement_cost;
 	}
 		
 }

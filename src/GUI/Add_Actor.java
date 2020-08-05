@@ -79,13 +79,14 @@ public class Add_Actor extends JPanel {
 					try
 					{
 						validateActor(actor);
-						new DbConnection().insertActor(actor);
-						JOptionPane.showMessageDialog(null, "Successfully inserted Mr. "+actor.getFirstName(), "Success", JOptionPane.INFORMATION_MESSAGE);
+						if(new DbConnection().insertActor(actor)==-2)
+							JOptionPane.showMessageDialog(null, "Mr. "+actor.getFirstName()+" already exists in our database", "Success", JOptionPane.INFORMATION_MESSAGE);
+						else
+							JOptionPane.showMessageDialog(null, "Successfully inserted Mr. "+actor.getFirstName(), "Success", JOptionPane.INFORMATION_MESSAGE);
 						clearPanel(centerPanel);
 					
 					}  catch (Exception e1)
 					{
-						clearPanel(centerPanel);
 						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
