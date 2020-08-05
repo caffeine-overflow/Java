@@ -241,11 +241,19 @@ public class DbConnection
 		try {
 			getConnection();	
 			myRslt = myStmt.executeQuery("SELECT * FROM actor where first_name = '"+actor.getFirstName()+"' and last_name = '" +actor.getLastName()+"'");
-			if(myRslt.next()) throw new SQLException("Actor already exist in the database");
+			if(myRslt.next()) return -2;
 			myStmt.executeUpdate("INSERT INTO actor (first_name, last_name) "
 					+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')", Statement.RETURN_GENERATED_KEYS);
 			myRslt = myStmt.getGeneratedKeys();
 			if(myRslt.next()) returnID = myRslt.getInt(1);
+		}
+		catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
 		}
 		finally
 		{
