@@ -1,32 +1,70 @@
 package GUI;
-/**
- * Program Name: IntroPanel.java
- * Purpose: a class to construct a JPanel that will later be called in another 
- *          class that will add it to a JTabbedPane container. 
- *          This class will contain instructions for the user and will be 
- *          the "top tab" in the layer of tabs. 
- * Coder: Bill Pulling for Section 01
- * Date: Feb 28, 2020
- */
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class Add_Rental extends JPanel
 {
-	//constructor
-	public Add_Rental()
-	{
-		super();//courtesy call
-		this.setBackground(Color.GREEN);
-		this.setLayout(new FlowLayout());
+	JButton addentalBtn, clearRentalAdd;
+	JTextField returnDateFld, rentalDateFld;
+	JComboBox cutomerNameFld ,filmTitleFld ;
+	JPanel centerPanel;
+	
+	public Add_Rental() {
+			
+		super();
+		this.setBackground(new Color(255,255,255));
+		this.setBorder(new EmptyBorder(20, 30, 30, 30));
+		this.setLayout(new BorderLayout() );
+			
+		/***********************************************************************************/
+		centerPanel = new JPanel();
+		centerPanel.setLayout(new GridLayout(5,2,30,30) );
+		this.add(centerPanel, BorderLayout.CENTER);
 		
-		//two JLabels
-		JLabel lbl1 = new JLabel("Layout Manager Demonstration App");
-		JLabel lbl2 = new JLabel("Choose a tab to see that particular layout.");
+		JLabel customerNameLbl = new JLabel("Customer Name:");
+		customerNameLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		this.add(lbl1);
-		this.add(lbl2);		
-	}	//end constructor
+		JLabel filmTitleLbl = new JLabel("Fim Title:");
+		filmTitleLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel rentalDateLbl = new JLabel("Rental Date:");		
+		rentalDateLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel returnDateLbl = new JLabel("Return Date:");		
+		returnDateLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		String [] arr = {"1","2"};
+		
+		cutomerNameFld = new JComboBox(arr);
+		filmTitleFld = new JComboBox(arr);
+		rentalDateFld  = new JTextField();
+		returnDateFld = new JTextField();
+		
+	
+		centerPanel.add(customerNameLbl);
+		centerPanel.add(filmTitleFld);
+		centerPanel.add(filmTitleLbl);
+		centerPanel.add(cutomerNameFld);
+		centerPanel.add(rentalDateLbl);
+		centerPanel.add(rentalDateFld);	
+		centerPanel.add(returnDateLbl);
+		centerPanel.add(returnDateFld);	
+
+
+		/***********************************************************************************/
+		JPanel btnPanel = new JPanel();
+		btnPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		btnPanel.setLayout(new FlowLayout() );
+	
+		this.add(btnPanel, BorderLayout.SOUTH);
+		
+		addentalBtn = new JButton("Add");
+		clearRentalAdd = new JButton("Clear");
+		btnPanel.add(addentalBtn);
+		btnPanel.add(clearRentalAdd);
+	}	
 }
-//end class
