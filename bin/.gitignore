@@ -1,7 +1,6 @@
 /Model/
 /GUI/
 /Database/
-<<<<<<< HEAD
-=======
 /Validator/
->>>>>>> origin/master
+/service/
+/Exception/
