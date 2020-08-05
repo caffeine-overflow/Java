@@ -22,14 +22,14 @@ import static Validator.SakilaValidator.*;
 public class Add_Actor extends JPanel {
 	JButton addActorBtn, clearActorBtn;
 	JTextField actorFirstNameFld, actorLastNameFld;
-
+	JPanel centerPanel;
 	// constructor
 	public Add_Actor() {
 		super();
 		this.setBorder(new EmptyBorder(20, 10, 30, 10));
 
 		/***********************************************************************************/
-		JPanel centerPanel = new JPanel();
+		centerPanel = new JPanel();
 		centerPanel.setLayout(new GridLayout(2, 2, 30, 30));
 		this.add(centerPanel);
 
@@ -78,18 +78,23 @@ public class Add_Actor extends JPanel {
 					actor.setLastName(actorLastNameFld.getText());
 					try
 					{
+						validateActor(actor);
 						new DbConnection().insertActor(actor);
+						JOptionPane.showMessageDialog(null, "Successfully inserted Mr. "+actor.getFirstName(), "Success", JOptionPane.INFORMATION_MESSAGE);
+						clearPanel(centerPanel);
 					
-					} catch (SQLException e1)
+					}  catch (Exception e1)
 					{
-						System.out.println("SQL Exeption, message is: " + e1.getMessage());
+						clearPanel(centerPanel);
+						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else {
 					JOptionPane.showMessageDialog(null, "Please enter the value in all required fields", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				
-			}
+			}else if(e.getActionCommand().equals("Clear"))
+				clearPanel(centerPanel);
 			
 		}//end actionPerformed()
 	

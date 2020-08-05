@@ -15,6 +15,8 @@ import javax.swing.border.EmptyBorder;
 
 import Database.DbConnection;
 import Model.Actor;
+import Model.Address;
+import Model.Customer;
 
 public class Add_Customer extends JPanel
 {
@@ -177,15 +179,18 @@ public class Add_Customer extends JPanel
 			{			  
 				if(areTextFieldValid(firstNameFld,emailFld,  lastNameFld, addressFld,postalFld,phoneFld) &&
 						areComboBoxValid(cityFld,districtFld,countryFld)) {
-
-//					try
-//					{
-//						new DbConnection();
-//					
-//					} catch (SQLException e1)
-//					{
-//						System.out.println("SQL Exeption, message is: " + e1.getMessage());
-//					}
+					Customer customer = getCustomer();
+					try
+					{
+						validateCustomer(customer);
+						new DbConnection().insertCustomer(customer);
+						JOptionPane.showMessageDialog(null, "Success", "Success", JOptionPane.INFORMATION_MESSAGE);
+						clearPanel(centerPanel);
+					
+					} catch (Exception e1)
+					{
+						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				else {
 					JOptionPane.showMessageDialog(null, "Please enter the value in all required fields", "Error", JOptionPane.ERROR_MESSAGE);
@@ -195,6 +200,23 @@ public class Add_Customer extends JPanel
 				clearPanel(centerPanel);
 			
 		}//end actionPerformed()
+
+		private Customer getCustomer()
+		{
+			Customer customer = new Customer();
+			Address address = new Address();
+			address.setCity(cityFld.getSelectedItem().toString());
+			address.setCountry(countryFld.getSelectedItem().toString());
+			address.setDistrict(districtFld.getSelectedItem().toString());
+			address.setStreetAddress(addressFld.getText());
+			address.setPhone(phoneFld.getText());
+			address.setPostalCode(postalFld.getText());
+			customer.setFirstName(firstNameFld.getText());
+			customer.setLastName(lastNameFld.getText());
+			customer.setEmail(emailFld.getText());
+			customer.setAddress(address);
+			return customer;
+		}
 	
 	}//end inner class
 }

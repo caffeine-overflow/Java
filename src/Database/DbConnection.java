@@ -175,11 +175,12 @@ public class DbConnection
 
 	}
 
-	public int getCityIdByName(String city) throws SQLException {
+	public int getCityIdByNameAndCountry(String city,String country) throws SQLException {
 		int cityID=-1;
 		try {
 			getConnection();
-			myRslt = myStmt.executeQuery("Select distinct city_id from city where city = '"+city+"'");		  
+			myRslt = myStmt.executeQuery("Select distinct city_id from city inner join country on"
+					+ " city.country_id=country.country_id and city = '"+city+"' and country = '"+country+"'");		  
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			myRslt.next();
 			cityID= myRslt.getInt("city_id");
@@ -199,17 +200,20 @@ public class DbConnection
 	public boolean insertCustomer(Customer customer) throws SQLException {
 		try {
 			Address address = customer.getAddress();
-			int cityID = getCityIdByName(address.getCity());
+			int cityID = getCityIdByNameAndCountry(address.getCity(),address.getCountry());
+			
 			getConnection();
 			myConn.setAutoCommit(false);
-			myStmt.executeUpdate("INSERT INTO address (address, district, city_id, postal_code, phone) "
-					+ "VALUES ('"+address.getStreetAddress()+"','" +address.getDistrict()+"','" +cityID+"','" +address.getPostalCode()+"','" +address.getPhone()+"')",
+			myStmt.executeUpdate("INSERT INTO address (address, district, city_id, postal_code, phone,location) "
+					+ "VALUES ('"+address.getStreetAddress()+"','" +address.getDistrict()+"','" +cityID+"','" +address.getPostalCode()+"','" 
+					+address.getPhone()+"',point(0,0))",
 					Statement.RETURN_GENERATED_KEYS);
+
 			myRslt = myStmt.getGeneratedKeys();
 			myRslt.next();
 			int addressID = myRslt.getInt(1);
 			myStmt.executeUpdate("INSERT INTO customer (store_id, first_name, last_name, email, address_id, active) "
-					+ "VALUES (1,'"+customer.getFirstName()+"','" +customer.getLastName()+"','" +customer.getEmail()+"','" +addressID+"','" +customer.getActive()+"')");
+					+ "VALUES (1,'"+customer.getFirstName()+"','" +customer.getLastName()+"','" +customer.getEmail()+"','" +addressID+"',1)");
 			myConn.commit();
 			closeConnection();
 			return true;
@@ -235,19 +239,13 @@ public class DbConnection
 	public int insertActor(Actor actor) throws SQLException {
 		int returnID=-1;
 		try {
-			getConnection();			
+			getConnection();	
+			myRslt = myStmt.executeQuery("SELECT * FROM actor where first_name = '"+actor.getFirstName()+"' and last_name = '" +actor.getLastName()+"'");
+			if(myRslt.next()) throw new SQLException("Actor already exist in the database");
 			myStmt.executeUpdate("INSERT INTO actor (first_name, last_name) "
 					+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')", Statement.RETURN_GENERATED_KEYS);
 			myRslt = myStmt.getGeneratedKeys();
 			if(myRslt.next()) returnID = myRslt.getInt(1);
-		}
-		catch(SQLException e1)
-		{
-			System.out.println("SQL Exeption, message is: " + e1.getMessage());
-		}
-		catch(Exception ex)
-		{
-			System.out.println("Some other Exception, message is: " + ex.getMessage());
 		}
 		finally
 		{
