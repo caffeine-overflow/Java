@@ -12,6 +12,7 @@ package Database;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import Model.*;
 import javax.sql.*;
@@ -84,8 +85,8 @@ public class DbConnection
 	}
 
 
-	public List<String> getAllCountry() throws SQLException{
-		List<String> allCountry = new ArrayList<String>();
+	public Vector<String> getAllCountry() throws SQLException{
+		Vector<String> allCountry = new Vector<String>();
 		try {
 			getConnection();
 			myRslt = myStmt.executeQuery("Select country from country");
@@ -113,8 +114,8 @@ public class DbConnection
 
 	}
 
-	public List<String> getAllDistrictInCountry(String countryName) throws SQLException{
-		List<String> allDistrict = new ArrayList<String>();
+	public Vector<String> getAllDistrictInCountry(String countryName) throws SQLException{
+		Vector<String> allDistrict = new Vector<String>();
 		try {
 			getConnection();
 			myRslt = myStmt.executeQuery("Select distinct district from address inner join city "
@@ -124,7 +125,7 @@ public class DbConnection
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			while(myRslt.next())
 			{
-				allDistrict.add(myRslt.getString("country"));
+				allDistrict.add(myRslt.getString("district"));
 			}
 			closeConnection();
 			return allDistrict;
@@ -144,8 +145,8 @@ public class DbConnection
 
 	}
 
-	public List<String> getAllCitiesInDistrict(String districtName) throws SQLException{
-		List<String> allCities = new ArrayList<String>();
+	public Vector<String> getAllCitiesInDistrict(String districtName) throws SQLException{
+		Vector<String> allCities = new Vector<String>();
 		try {
 			getConnection();
 			myRslt = myStmt.executeQuery("Select distinct city from address inner join city "
@@ -154,7 +155,7 @@ public class DbConnection
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			while(myRslt.next())
 			{
-				allCities.add(myRslt.getString("country"));
+				allCities.add(myRslt.getString("city"));
 			}
 			closeConnection();
 			return allCities;
