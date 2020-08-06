@@ -13,11 +13,11 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import Database.DbConnection;
-import Model.Actor;
+import static Database.DbConnection.*;
 import Model.Address;
 import Model.Customer;
 
+@SuppressWarnings("serial")
 public class Add_Customer extends JPanel
 {
 	JButton addCustomerBtn, clearCustomerAdd;
@@ -30,7 +30,7 @@ public class Add_Customer extends JPanel
 	{
 		super();
 		this.setBackground(new Color(255,255,255));
-		this.setBorder(new EmptyBorder(20, 30, 30, 30));
+		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		this.setLayout(new BorderLayout() );
 			
 		/***********************************************************************************/
@@ -66,7 +66,7 @@ public class Add_Customer extends JPanel
 		countryLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		try
 		{
-			countryArray = new DbConnection().getAllCountry();
+			countryArray = getAllCountry();
 		} catch (SQLException e)
 		{
 			// TODO Auto-generated catch block
@@ -142,7 +142,7 @@ public class Add_Customer extends JPanel
 				try
 				{
 					if(calledBy.equals("country")) {				
-							districtArray = new DbConnection().getAllDistrictInCountry(countryFld.getSelectedItem().toString());
+							districtArray = getAllDistrictInCountry(countryFld.getSelectedItem().toString());
 							districtFld.removeAllItems();
 							for(String district:districtArray)
 								districtFld.addItem(district);
@@ -151,7 +151,7 @@ public class Add_Customer extends JPanel
 						
 					}
 					else if(calledBy.equals("district")) {				
-						cityArray = new DbConnection().getAllCitiesInDistrict(districtFld.getSelectedItem().toString());
+						cityArray = getAllCitiesInDistrict(districtFld.getSelectedItem().toString());
 						cityFld.removeAllItems();
 							for(String city:cityArray)
 								cityFld.addItem(city);
@@ -185,8 +185,8 @@ public class Add_Customer extends JPanel
 					try
 					{
 						validateCustomer(customer);
-						new DbConnection().insertCustomer(customer);
-						JOptionPane.showMessageDialog(null, "Success", "Success", JOptionPane.INFORMATION_MESSAGE);
+						insertCustomer(customer);
+						JOptionPane.showMessageDialog(null, "Successfully added Mr. "+firstNameFld.getText(), "Success", JOptionPane.INFORMATION_MESSAGE);
 						clearPanel(centerPanel);
 					
 					} catch (Exception e1)

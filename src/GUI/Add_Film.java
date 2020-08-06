@@ -15,12 +15,13 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import Database.DbConnection;
+import static Database.DbConnection.*;
 import Exception.SakilaExpection;
 import Model.Actor;
 import Model.Film;
 import static Validator.SakilaValidator.*;
 
+@SuppressWarnings("serial")
 public class Add_Film extends JPanel {
 	JButton addFilmBtn, clearFilmAdd, addActorBtn;
 	JTextField titleFld, releaseFld, lengthFld, replacementCostFld;
@@ -39,7 +40,7 @@ public class Add_Film extends JPanel {
 		super();
 		
 		this.setBackground(new Color(255, 255, 255));
-		this.setBorder(new EmptyBorder(20, 30, 30, 30));
+		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		this.setLayout(new BorderLayout());
 
 		/***********************************************************************************/
@@ -86,9 +87,11 @@ public class Add_Film extends JPanel {
 		titleFld = new JTextField();
 		releaseFld = new JTextField();
 		Vector<String> categories = null;
+		Vector<String> languages = null;
 		try
 		{
-			categories = new DbConnection().getAllCategory();
+			categories = getAllCategory();
+			languages = getAllLanguages();
 		} catch (SQLException e)
 		{
 			// TODO Auto-generated catch block
@@ -96,15 +99,7 @@ public class Add_Film extends JPanel {
 		}
 		categoryFld = new JComboBox<String>(categories);
 		categoryFld.setEditable(true);
-		Vector<String> languages = null;
-		try
-		{
-			languages = new DbConnection().getAllLanguages();
-		} catch (SQLException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		languageFld = new  JComboBox<String>(languages);
 		languageFld.setEditable(true);
 		durationFld = new JComboBox<String>(DURATION_ARRAY);
@@ -212,7 +207,8 @@ public class Add_Film extends JPanel {
 						if(actors.isEmpty())
 							JOptionPane.showMessageDialog(null, "Please enter at least one actor for the film.", "Error", JOptionPane.ERROR_MESSAGE);
 						else {
-							new DbConnection().insertFilmWithActors(film,actors);
+							insertFilmWithActors(film,actors);
+							JOptionPane.showMessageDialog(null, "Successfully added "+titleFld.getText(), "Success", JOptionPane.INFORMATION_MESSAGE);
 							clearPanel(centerPanel);
 							actors.removeAll(actors);
 						}
