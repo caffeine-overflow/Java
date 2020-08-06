@@ -26,7 +26,7 @@ public class Add_Actor extends JPanel {
 	// constructor
 	public Add_Actor() {
 		super();
-		this.setBorder(new EmptyBorder(20, 10, 30, 10));
+		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		/***********************************************************************************/
 		centerPanel = new JPanel();
@@ -57,8 +57,7 @@ public class Add_Actor extends JPanel {
 
 		addActorBtn = new JButton("Add");
 		clearActorBtn = new JButton("Clear");
-		AddActorPage aap = new AddActorPage();
-		addActorBtn.addActionListener(aap);
+		addActorBtn.addActionListener(new AddActorPage());
 		btnPanel.add(addActorBtn);
 		btnPanel.add(clearActorBtn);
 	}

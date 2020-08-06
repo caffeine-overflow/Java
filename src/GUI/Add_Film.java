@@ -39,7 +39,7 @@ public class Add_Film extends JPanel {
 		super();
 		
 		this.setBackground(new Color(255, 255, 255));
-		this.setBorder(new EmptyBorder(20, 30, 30, 30));
+		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		this.setLayout(new BorderLayout());
 
 		/***********************************************************************************/

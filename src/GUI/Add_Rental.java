@@ -23,28 +23,22 @@ public class Add_Rental extends JPanel
 	JPanel centerPanel;
 
 	public Add_Rental() {
-
 		super();
 		this.setBackground(new Color(255,255,255));
-		this.setBorder(new EmptyBorder(30, 30, 30, 30));
+		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		this.setLayout(new BorderLayout() );
-
 		/***********************************************************************************/
+		JPanel superCenterPanel = new JPanel(new GridLayout(2, 1, 30, 30));
 		centerPanel = new JPanel();
-		centerPanel.setLayout(new GridLayout(2,2,10,250) );
-		this.add(centerPanel, BorderLayout.CENTER);
+		centerPanel.setLayout(new GridLayout(3, 2, 10, 50));
+		superCenterPanel.add(centerPanel);
+		this.add(superCenterPanel,BorderLayout.CENTER);
 
-		JLabel customerNameLbl = new JLabel("Customer Name:");
-		customerNameLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		JLabel customerLbl = new JLabel("Customer Name:");
+		customerLbl.setHorizontalAlignment(SwingConstants.LEFT);
 
-		JLabel filmTitleLbl = new JLabel("Fim Title:");
-		filmTitleLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-
-		JLabel rentalDateLbl = new JLabel("Rental Date:");		
-		rentalDateLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-
-		JLabel returnDateLbl = new JLabel("Return Date:");		
-		returnDateLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+		JLabel filmLbl = new JLabel("Fim Title:");
+		filmLbl.setHorizontalAlignment(SwingConstants.LEFT);
 
 		Vector<String> filmList = null;
 		Vector<String> customerList = null;
@@ -59,26 +53,25 @@ public class Add_Rental extends JPanel
 		}
 		cutomerNameFld = new JComboBox<String>(customerList);
 		filmTitleFld = new JComboBox<String>(filmList);
-		rentalDateFld  = new JTextField();
-		returnDateFld = new JTextField();
+		cutomerNameFld.setSize(5,5);
 
-
-		centerPanel.add(customerNameLbl);
+		centerPanel.add(customerLbl);
 		centerPanel.add(cutomerNameFld);
-		centerPanel.add(filmTitleLbl);
+		centerPanel.add(filmLbl);
 		centerPanel.add(filmTitleFld);
-
+		
 
 		/***********************************************************************************/
 		JPanel btnPanel = new JPanel();
-		btnPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		btnPanel.setLayout(new FlowLayout() );
 
-		this.add(btnPanel, BorderLayout.SOUTH);
+		btnPanel.setLayout(new FlowLayout());
 
+		superCenterPanel.add(btnPanel);
 		addRentalBtn = new JButton("Add Rental");
+		addRentalBtn.setSize(5,5);
 		addRentalBtn.addActionListener(new AddRentalListner());
 		btnPanel.add(addRentalBtn);
+		
 	}	
 
 
@@ -105,13 +98,10 @@ public class Add_Rental extends JPanel
 					rental.setRentalDuration(rentalDuration);
 					new DbConnection().insertRental(rental);
 					JOptionPane.showMessageDialog(null, "Rented "+film[0].trim()+" to "+customer[0], "Error", JOptionPane.ERROR_MESSAGE);
-					clearPanel(centerPanel);
 				}  catch (Exception e1)
 				{
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
-			
-
 		}//end actionPerformed()
 
 	}//end inner class
