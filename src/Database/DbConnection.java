@@ -4,7 +4,7 @@ package Database;
  * Purpose: shows the steps involved in making a connection to a back end database
  *          using a JDBC driver and classes from the java.sql package.
  *          REVISION: changed column labels to column index numbers in the while loop 
- * Coder: Bill Pulling 
+ * Coder: Prabin Gyawali 
  * Date: Jul 9, 2019
  */
 
@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Vector;
 
 import Model.*;
-import javax.sql.*;
 public class DbConnection
 {
 
@@ -171,6 +170,34 @@ public class DbConnection
 		return null;
 	}
 	
+	public Vector<String> getAllCustomer() throws SQLException{
+		Vector<String> customers = new Vector<String>();
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("select customer_id,first_name, last_name,email from customer");
+
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				customers.add(myRslt.getString("first_name") +' '+myRslt.getString("last_name") +" ("+myRslt.getString("email")+")    @id::"+myRslt.getString("customer_id") );
+			}
+			closeConnection();
+			return customers;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+	}
+	
 	
 	public Vector<String> getAllDistrictInCountry(String countryName) throws SQLException{
 		Vector<String> allDistrict = new Vector<String>();
@@ -202,6 +229,57 @@ public class DbConnection
 		return null;
 
 	}
+	
+	
+	public Vector<String> getAllFilmTitles() throws SQLException{
+		Vector<String> allFilmTitles = new Vector<String>();
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select * from film");
+
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				allFilmTitles.add(myRslt.getString("title")+"    @id::"+myRslt.getString("film_id"));
+			}
+			closeConnection();
+			return allFilmTitles;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+
+	}
+	
+	public int getRentalDurationForFilm(int filmID) throws SQLException {
+		int filmDUration=-1;
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select rental_duration from film where film_id = '"+filmID+"'");		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			myRslt.next();
+			filmDUration= myRslt.getInt("rental_duration");
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return filmDUration;
+	}
+	
 
 	public Vector<String> getAllCitiesInDistrict(String districtName) throws SQLException{
 		Vector<String> allCities = new Vector<String>();
@@ -294,6 +372,31 @@ public class DbConnection
 
 	}
 	
+	public boolean insertRental(Rental rental) throws SQLException {
+		boolean returnValue=false;
+		try {
+			getConnection();
+			myStmt.executeUpdate("INSERT INTO rental (rental_date, inventory_id, customer_id, return_date, staff_id) "
+					+ "VALUES (now(),"+rental.getInventoryID()+"," +rental.getCustomerID()
+					+	", DATE_ADD(now(), INTERVAL "+rental.getRentalDuration()+" DAY), 1)");
+			returnValue=true;
+		}
+		catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return returnValue;
+
+	}
+	
 	public int insertActor(Actor actor) throws SQLException {
 		int returnID=-1;
 		try {
@@ -302,6 +405,31 @@ public class DbConnection
 			if(myRslt.next()) return -2;
 			myStmt.executeUpdate("INSERT INTO actor (first_name, last_name) "
 					+ "VALUES ('"+actor.getFirstName()+"','" +actor.getLastName()+"')", Statement.RETURN_GENERATED_KEYS);
+			myRslt = myStmt.getGeneratedKeys();
+			if(myRslt.next()) returnID = myRslt.getInt(1);
+		}
+		catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return returnID;
+
+	}
+	
+	public int insertInventory(int filmID) throws SQLException {
+		int returnID=-1;
+		try {
+			getConnection();	
+			myStmt.executeUpdate("INSERT INTO inventory (film_id, store_id) "
+					+ "VALUES ("+filmID+",1)", Statement.RETURN_GENERATED_KEYS);
 			myRslt = myStmt.getGeneratedKeys();
 			if(myRslt.next()) returnID = myRslt.getInt(1);
 		}

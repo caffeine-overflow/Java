@@ -23,7 +23,7 @@ public class Reports extends JPanel
 		
 		//two JLabels
 		JLabel lbl1 = new JLabel("Layout Manager Demonstration App");
-		JLabel lbl2 = new JLabel("Choose a tab to see that particular layout.");
+		JLabel lbl2 = new JLabel("This will be COmpleted By Rohit Bhutta");
 		
 		this.add(lbl1);
 		this.add(lbl2);		
