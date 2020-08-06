@@ -1,8 +1,4 @@
 package GUI;
-import static Validator.SakilaValidator.areTextFieldValid;
-import static Validator.SakilaValidator.clearPanel;
-import static Validator.SakilaValidator.validateActor;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -11,15 +7,15 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import Database.DbConnection;
-import Model.Actor;
+import static Database.DbConnection.*;
 import Model.Rental;
 
+@SuppressWarnings("serial")
 public class Add_Rental extends JPanel
 {
 	JButton addRentalBtn, clearRentalAdd;
 	JTextField returnDateFld, rentalDateFld;
-	JComboBox cutomerNameFld ,filmTitleFld ;
+	JComboBox<String> cutomerNameFld ,filmTitleFld ;
 	JPanel centerPanel;
 
 	public Add_Rental() {
@@ -44,8 +40,8 @@ public class Add_Rental extends JPanel
 		Vector<String> customerList = null;
 		try
 		{
-			filmList = new DbConnection().getAllFilmTitles();
-			customerList = new DbConnection().getAllCustomer();
+			filmList = getAllFilmTitles();
+			customerList = getAllCustomer();
 		} catch (SQLException e)
 		{
 			// TODO Auto-generated catch block
@@ -89,15 +85,15 @@ public class Add_Rental extends JPanel
 					int customerID = Integer.parseInt(customer[1]);
 					int filmID = Integer.parseInt(film[1]);
 
-					int inventoryID=new DbConnection().insertInventory(filmID);
-					int rentalDuration = new DbConnection().getRentalDurationForFilm(filmID);
+					int inventoryID=insertInventory(filmID);
+					int rentalDuration = getRentalDurationForFilm(filmID);
 					
 					rental.setCustomerID(customerID);
 					rental.setFilmID(filmID);
 					rental.setInventoryID(inventoryID);
 					rental.setRentalDuration(rentalDuration);
-					new DbConnection().insertRental(rental);
-					JOptionPane.showMessageDialog(null, "Rented "+film[0].trim()+" to "+customer[0], "Error", JOptionPane.ERROR_MESSAGE);
+					insertRental(rental);
+					JOptionPane.showMessageDialog(null, "Rented "+film[0].trim()+" to "+customer[0], "Success", JOptionPane.INFORMATION_MESSAGE);
 				}  catch (Exception e1)
 				{
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

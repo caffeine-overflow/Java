@@ -3,22 +3,14 @@ package GUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableModel;
-
-import Database.DbConnection;
+import static Database.DbConnection.*;
 import Model.Actor;
 import static Validator.SakilaValidator.*;
 
+@SuppressWarnings("serial")
 public class Add_Actor extends JPanel {
 	JButton addActorBtn, clearActorBtn;
 	JTextField actorFirstNameFld, actorLastNameFld;
@@ -78,8 +70,8 @@ public class Add_Actor extends JPanel {
 					try
 					{
 						validateActor(actor);
-						if(new DbConnection().insertActor(actor)==-2)
-							JOptionPane.showMessageDialog(null, "Mr. "+actor.getFirstName()+" already exists in our database", "Success", JOptionPane.INFORMATION_MESSAGE);
+						if(insertActor(actor)==-2)
+							JOptionPane.showMessageDialog(null, "Mr. "+actor.getFirstName()+" already exists in our database", "Warning", JOptionPane.WARNING_MESSAGE);
 						else
 							JOptionPane.showMessageDialog(null, "Successfully inserted Mr. "+actor.getFirstName(), "Success", JOptionPane.INFORMATION_MESSAGE);
 						clearPanel(centerPanel);
