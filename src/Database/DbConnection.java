@@ -259,6 +259,34 @@ public class DbConnection
 		return null;
 
 	}
+	
+	public static Vector<String> getAllFilms() throws SQLException{
+		Vector<String> allFilmTitles = new Vector<String>();
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select * from film");
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				allFilmTitles.add(myRslt.getString("title"));
+			}
+			closeConnection();
+			return allFilmTitles;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+
+	}
 
 	public static int getRentalDurationForFilm(int filmID) throws SQLException {
 		int filmDUration=-1;
@@ -279,7 +307,73 @@ public class DbConnection
 		}
 		return filmDUration;
 	}
+	
+	public static float getIncomeReport(String whereClause) throws SQLException {
+		float filmDUration=-1f;
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("select distinct sum(amount) as amount from payment inner join"
+																	+ " rental on payment.rental_id = rental.rental_id inner join"
+																	+	" inventory on rental.inventory_id = inventory.inventory_id inner join"
+																	+	" film on inventory.film_id = film.film_id inner join "
+																	+	" store on inventory.store_id = store.store_id inner join"
+																	+	" film_category on film_category.film_id = film.film_id inner join"
+																	+	" category on category.category_id = film_category.category_id"
+																	+ whereClause);		  
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			myRslt.next();
+			filmDUration= myRslt.getFloat(1);
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return filmDUration;
+	}
 
+	
+	public static String getBestCustomer(String whereClause) throws SQLException {
+		String returnValue="";
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("select CONCAT( CONCAT(UCASE(LEFT(first_name, 1)), LCASE(SUBSTRING(first_name, 2))), ' ' ,"
+					+ " CONCAT(UCASE(LEFT(last_name, 1)), LCASE(SUBSTRING(last_name, 2)))) as name,Total_Rental from"
+					+ " customer inner join (select count(*) as 'Total_Rental',customer_id from rental"
+					+ " inner join inventory on rental.inventory_id = inventory.inventory_id"
+					+ whereClause
+					+ " group by customer_id order by 1 desc limit 1) as rental" 
+					+ " on customer.customer_id = rental.customer_id");		  
+			
+			myRslt.next();
+			returnValue+=myRslt.getString("name")+" who rented "+myRslt.getInt("Total_Rental")+" times and\n\t\t";
+			myRslt = myStmt.executeQuery("select CONCAT( CONCAT(UCASE(LEFT(first_name, 1)), LCASE(SUBSTRING(first_name, 2))), ' ' ,"
+					+ " CONCAT(UCASE(LEFT(last_name, 1)), LCASE(SUBSTRING(last_name, 2)))) as name,Total_Spent from"
+					+ " customer inner join (select sum(amount) as 'Total_Spent',payment.customer_id from payment"
+					+ " inner join rental on payment.rental_id = rental.rental_id"
+					+ " inner join inventory on rental.inventory_id = inventory.inventory_id"
+					+ whereClause
+					+ " group by customer_id order by 1 desc limit 1) as rental" 
+					+ " on customer.customer_id = rental.customer_id");	
+
+			myRslt.next();
+			returnValue+=myRslt.getString("name")+" who spent $"+myRslt.getFloat("Total_Spent");
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return returnValue;
+	}
+	
+	
 
 	public  static Vector<String> getAllCitiesInDistrict(String districtName) throws SQLException{
 		Vector<String> allCities = new Vector<String>();
