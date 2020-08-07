@@ -25,20 +25,11 @@ public class Reports extends JPanel
 {
 
 	// Variables declaration - do not modify                     
-	private JCheckBox checkBoxStore1;
-	private JCheckBox checkBoxStore2;
-	private JComboBox<String> comboBoxFilm;
-	private JComboBox<String> comboBoxFrom;
-	private JComboBox<String> comboTO;
-	private JLabel lblTitleText;
-	private JLabel lblFilmCategory;
-	private JLabel lblReleaseYear;
-	private JLabel lblTo;
-	private JLabel lblStores;
-	private JButton btnGetReport;
-	private JButton btnGetBestCustomer;
-	Vector<String> yearList;
-	Vector<String> filmList;
+	private JCheckBox checkBoxStore1, checkBoxStore2;
+	private JComboBox<String> comboBoxFilm, comboBoxFrom, comboTO;
+	private JLabel lblTitleText,lblFilmCategory,lblReleaseYear,lblTo,lblStores;
+	private JButton btnGetReport, btnGetBestCustomer;
+	private Vector<String> yearList, filmList;
 	// End of variables declaration  
 	//constructor
 	public Reports()
@@ -46,7 +37,7 @@ public class Reports extends JPanel
 		super();//courtesy call
 
 
-
+		this.setBackground(new Color(250,250,250));
 		lblTo = new JLabel("TO");
 		lblStores = new JLabel("Store:");
 		lblTitleText = new JLabel("Get Rental Income");
@@ -67,8 +58,7 @@ public class Reports extends JPanel
 			filmList.addAll(getAllCategory());
 		} catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error while getting data from database. "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		for(Integer i=1980;i<=2020;++i)
 			yearList.add(i.toString());
@@ -154,7 +144,7 @@ public class Reports extends JPanel
 				try
 				{
 					float totalIncome = getIncomeReport(whereClause);
-					String outputMessage = String.format("Total income for %s film%s at %s is ", filmCategory,dateRange,store);
+					String outputMessage = String.format("Total income for %s film%s at %s is $", filmCategory,dateRange,store);
 					JOptionPane.showMessageDialog(null, outputMessage + totalIncome, "Income Report", JOptionPane.INFORMATION_MESSAGE);
 				} catch (SQLException e1)
 				{
@@ -198,8 +188,7 @@ public class Reports extends JPanel
 					JOptionPane.showMessageDialog(null, outputMessage , "Best Customer", JOptionPane.INFORMATION_MESSAGE);
 				} catch (SQLException e1)
 				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Somethigng wrong in database: "+e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			else {

@@ -29,23 +29,23 @@ public class Add_Film extends JPanel {
 	JComboBox<String> durationFld,rateFld, categoryFld, languageFld, ratingFld;
 	JPanel centerPanel;
 	ArrayList<Actor> actors;
-	
+
 
 	private final static String[] DURATION_ARRAY = { "3","4","5","6","7"};
 	private final static String[] RATE_ARRAY = { "0.99","2.99","4.99"};
 	private final static String[] RATING_ARRAY = { "G","PG","PG-13","R","NC-17"};
-	
+
 	// constructor
 	public Add_Film() {
 		super();
-		
+
 		this.setBackground(new Color(255, 255, 255));
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		this.setLayout(new BorderLayout());
 
 		/***********************************************************************************/
 		centerPanel = new JPanel();
-		centerPanel.setLayout(new GridLayout(12, 2, 10, 10));
+		centerPanel.setLayout(new GridLayout(12, 2, 15, 5));
 		this.add(centerPanel, BorderLayout.CENTER);
 
 		JLabel titleLbl = new JLabel("Title:");
@@ -53,13 +53,13 @@ public class Add_Film extends JPanel {
 
 		JLabel releaseLbl = new JLabel("Release year:");
 		releaseLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel categoryLbl = new JLabel("Category:");
 		categoryLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel languageLbl = new JLabel("Language:");
 		languageLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel durationLbl = new JLabel("Rental duration:");
 		durationLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 
@@ -77,10 +77,10 @@ public class Add_Film extends JPanel {
 
 		JLabel descriptionLbl = new JLabel("Desription:");
 		descriptionLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel featuresLbl = new JLabel("Special features:");
 		featuresLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel addActorLbl = new JLabel(" ");
 		addActorLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 
@@ -94,8 +94,7 @@ public class Add_Film extends JPanel {
 			languages = getAllLanguages();
 		} catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error while getting data from database. "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		categoryFld = new JComboBox<String>(categories);
 		categoryFld.setEditable(true);
@@ -109,8 +108,8 @@ public class Add_Film extends JPanel {
 		ratingFld = new JComboBox<String>(RATING_ARRAY);
 		featuresFld = new JTextArea();
 		descriptionFld = new JTextArea();
-		addActorBtn = new JButton("Add Actor");
-		
+		addActorBtn = new JButton("Add Actors");
+
 		centerPanel.add(titleLbl);
 		centerPanel.add(titleFld);
 		centerPanel.add(categoryLbl);
@@ -151,43 +150,55 @@ public class Add_Film extends JPanel {
 		btnPanel.add(clearFilmAdd);
 		actors=new ArrayList<>();
 		addActorBtn.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-   
-            	JTextField actorFirstName = new JTextField();
-            	JTextField actorLastName = new JTextField();
-            	
-            	Object[] message = {
-            	    "First Name:", actorFirstName,
-            	    "Last Name:", actorLastName,
-            	};
-            	
-            	Object[] options = {"Cancel","Save"};
-                       
-            	int option = JOptionPane.showConfirmDialog(centerPanel, message, "Add Actor", JOptionPane.OK_CANCEL_OPTION);
-            	if (option == JOptionPane.OK_OPTION)
-            	{
-            		if(areTextFieldValid(actorFirstName,actorLastName)) {
-            			Actor actor = new Actor();
-            			actor.setFirstName(actorFirstName.getText());
-            			actor.setLastName(actorLastName.getText());
-            			try
-									{
-										validateActor(actor);
-										actors.add(actor);
-									} catch (SakilaExpection e)
-									{
-										JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-									}
-            		}
-            	}
-            }
-        });
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+				JComboBox<String> actorFirstName=null;
+				try
+				{
+					actorFirstName = new JComboBox<String>(getAllActors());
+				} catch (SQLException e1)
+				{
+					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				actorFirstName.setEditable(true);
+
+				Object[] message = {
+						"Actor Name: ", actorFirstName
+				};
+
+				Object[] options = {"Add Actor"};
+
+				int option = JOptionPane.showOptionDialog(centerPanel, message, "Add Actor",0,JOptionPane.PLAIN_MESSAGE,null,options,null);
+
+					if (option == JOptionPane.OK_OPTION)
+					{
+						if(areComboBoxValid(actorFirstName)) {
+							Actor actor = new Actor();
+							actor.setFirstName(actorFirstName.getSelectedItem().toString().split(" ")[0]);
+							actor.setLastName(actorFirstName.getSelectedItem().toString().split(" ")[1]);
+							try
+							{
+								validateActor(actor);
+								actors.add(actor);
+								JOptionPane.showMessageDialog(null, "Successfully added "+actor.getFirstName()+" for the film.", "Success", JOptionPane.INFORMATION_MESSAGE);
+							} catch (SakilaExpection ex)
+							{
+								JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Please select an Actor or enter a new actor Name", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			
+		});
 	}
-	
-	
-	
-//create inner class listener object
+
+
+
+	//create inner class listener object
 	private class AddFilmPage implements ActionListener
 	{
 		@Override
@@ -198,7 +209,7 @@ public class Add_Film extends JPanel {
 				boolean validTextFields = areTextFieldValid(titleFld, releaseFld, lengthFld, replacementCostFld);
 				boolean validComboBoxes = areComboBoxValid(durationFld,rateFld, categoryFld, languageFld, ratingFld);
 				boolean validTextArea = areTextAreasValid(featuresFld, descriptionFld);
-				
+
 				if( validTextFields && validComboBoxes && validTextArea) {
 					Film film = getFilm();
 					try
@@ -212,7 +223,7 @@ public class Add_Film extends JPanel {
 							clearPanel(centerPanel);
 							actors.removeAll(actors);
 						}
-					
+
 					}  catch (Exception e1)
 					{
 						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -221,17 +232,17 @@ public class Add_Film extends JPanel {
 				else {
 					JOptionPane.showMessageDialog(null, "Please enter the value in all required fields", "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				
+
 			}else if(e.getActionCommand().equals("Clear")) {
 				clearPanel(centerPanel);
 
 				actors.removeAll(actors);
 			}
-			
-			
+
+
 		}//end actionPerformed()
 
-		
+
 		private Film getFilm()
 		{
 			Film film = new Film();
@@ -243,12 +254,12 @@ public class Add_Film extends JPanel {
 			film.setRental_rate(Float.parseFloat(rateFld.getSelectedItem().toString().trim()));
 			film.setDescription(descriptionFld.getText().trim());
 			film.setSpecial_features(featuresFld.getText().trim());
-			
+
 			film.setStringRelease_year(releaseFld.getText().trim());
 			film.setStringLength(lengthFld.getText().trim());
 			film.setStringReplacement_cost(replacementCostFld.getText().trim());
 			return film;
 		}
-	
+
 	}//end inner class
 }

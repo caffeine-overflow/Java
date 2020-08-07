@@ -12,8 +12,9 @@ public class Gui_Interface extends JFrame
 			
 			//boilerplate
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			this.setSize(600,700);
+			this.setSize(600,650);
 			this.setLocationRelativeTo(null);
+			this.setResizable(false);
 			
 			//create a JTabbedPane object
 			JTabbedPane tPane = new JTabbedPane();

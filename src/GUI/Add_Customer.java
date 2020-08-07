@@ -35,7 +35,7 @@ public class Add_Customer extends JPanel
 			
 		/***********************************************************************************/
 		centerPanel = new JPanel();
-		centerPanel.setLayout(new GridLayout(9,2,30,30) );
+		centerPanel.setLayout(new GridLayout(9,2,10,10) );
 		this.add(centerPanel, BorderLayout.CENTER);
 		
 		JLabel firstNameLbl = new JLabel("First Name:");
@@ -69,8 +69,7 @@ public class Add_Customer extends JPanel
 			countryArray = getAllCountry();
 		} catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error while getting data from database. "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		districtArray=new Vector<String>();
 		cityArray=new Vector<String>();
@@ -160,8 +159,7 @@ public class Add_Customer extends JPanel
 					}
 				} catch (SQLException e1)
 				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error while getting data from database. "+e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 					
 			}

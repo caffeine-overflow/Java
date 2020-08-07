@@ -12,14 +12,14 @@ import static Validator.SakilaValidator.*;
 
 @SuppressWarnings("serial")
 public class Add_Actor extends JPanel {
-	JButton addActorBtn, clearActorBtn;
-	JTextField actorFirstNameFld, actorLastNameFld;
-	JPanel centerPanel;
+	
+	private JButton addActorBtn, clearActorBtn;
+	private JTextField actorFirstNameFld, actorLastNameFld;
+	private JPanel centerPanel;
 	// constructor
 	public Add_Actor() {
 		super();
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
-
 		/***********************************************************************************/
 		centerPanel = new JPanel();
 		centerPanel.setLayout(new GridLayout(2, 2, 30, 30));

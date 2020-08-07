@@ -2,6 +2,10 @@ package GUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -13,10 +17,11 @@ import Model.Rental;
 @SuppressWarnings("serial")
 public class Add_Rental extends JPanel
 {
-	JButton addRentalBtn, clearRentalAdd;
+	JButton addRentalBtn, refreshListBtn;
 	JTextField returnDateFld, rentalDateFld;
 	JComboBox<String> cutomerNameFld ,filmTitleFld ;
 	JPanel centerPanel;
+	JLabel rentedFromLbl,rentedToLbl;
 
 	public Add_Rental() {
 		super();
@@ -35,7 +40,10 @@ public class Add_Rental extends JPanel
 
 		JLabel filmLbl = new JLabel("Fim Title:");
 		filmLbl.setHorizontalAlignment(SwingConstants.LEFT);
-
+		rentedFromLbl = new JLabel("Rented From: ");
+		rentedToLbl = new JLabel("Rented Till : ");
+		rentedFromLbl.setFont(new Font("Tahoma", 1, 18)); // NOI18N
+		rentedToLbl.setFont(new Font("Tahoma", 1, 18)); // NOI18N
 		Vector<String> filmList = null;
 		Vector<String> customerList = null;
 		try
@@ -44,8 +52,7 @@ public class Add_Rental extends JPanel
 			customerList = getAllCustomer();
 		} catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error while getting data from database. "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		cutomerNameFld = new JComboBox<String>(customerList);
 		filmTitleFld = new JComboBox<String>(filmList);
@@ -55,6 +62,8 @@ public class Add_Rental extends JPanel
 		centerPanel.add(cutomerNameFld);
 		centerPanel.add(filmLbl);
 		centerPanel.add(filmTitleFld);
+		centerPanel.add(rentedFromLbl);
+		centerPanel.add(rentedToLbl);
 		
 
 		/***********************************************************************************/
@@ -67,6 +76,10 @@ public class Add_Rental extends JPanel
 		addRentalBtn.setSize(5,5);
 		addRentalBtn.addActionListener(new AddRentalListner());
 		btnPanel.add(addRentalBtn);
+		refreshListBtn = new JButton("Refresh Page");
+		refreshListBtn.setSize(5,5);
+		refreshListBtn.addActionListener(new RefreshActionListner());
+		btnPanel.add(refreshListBtn);
 		
 	}	
 
@@ -87,7 +100,12 @@ public class Add_Rental extends JPanel
 
 					int inventoryID=insertInventory(filmID);
 					int rentalDuration = getRentalDurationForFilm(filmID);
-					
+					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
+				  LocalDateTime now = LocalDateTime.now();
+				  String rentedFrom = dtf.format(now);
+				  String rentedTill = dtf.format(now.plusDays(rentalDuration));
+				  rentedFromLbl.setText("Rented On: "+rentedFrom);
+				  rentedToLbl.setText("Rented Till: "+rentedTill);
 					rental.setCustomerID(customerID);
 					rental.setFilmID(filmID);
 					rental.setInventoryID(inventoryID);
@@ -97,6 +115,35 @@ public class Add_Rental extends JPanel
 				}  catch (Exception e1)
 				{
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+		}//end actionPerformed()
+
+	}//end inner class
+	
+	
+//create inner class listener object
+	private class RefreshActionListner implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{ 
+				try
+				{
+					Vector<String> filmList = null;
+					Vector<String> customerList = null;
+					filmList = getAllFilmTitles();
+					customerList = getAllCustomer();
+					for(String film : filmList)
+						filmTitleFld.addItem(film);
+					for(String customer : customerList)
+						cutomerNameFld.addItem(customer);
+					
+				  rentedFromLbl.setText("Rented On: ");
+				  rentedToLbl.setText("Rented Till: ");
+					JOptionPane.showMessageDialog(null, "Page Refreshed", "Success", JOptionPane.INFORMATION_MESSAGE);
+				}  catch (Exception e1)
+				{
+					JOptionPane.showMessageDialog(null, "Error while getting data from database. "+e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 		}//end actionPerformed()
 

@@ -13,6 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import org.apache.commons.text.WordUtils;
 
 import Model.*;
 public class DbConnection
@@ -112,6 +113,8 @@ public class DbConnection
 		return null;
 
 	}
+	
+	
 
 	public static Vector<String> getAllCategory() throws SQLException{
 		Vector<String> categories = new Vector<String>();
@@ -179,7 +182,7 @@ public class DbConnection
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			while(myRslt.next())
 			{
-				customers.add(myRslt.getString("first_name") +' '+myRslt.getString("last_name") +" ("+myRslt.getString("email")+")    @id::"+myRslt.getString("customer_id") );
+				customers.add(concatTitleCaseString(myRslt.getString("first_name"),myRslt.getString("last_name")) +" ("+myRslt.getString("email")+")    @id::"+myRslt.getString("customer_id") );
 			}
 			closeConnection();
 			return customers;
@@ -240,7 +243,7 @@ public class DbConnection
 			//Step 4: PROCESS the myRslt result set object using a while loop
 			while(myRslt.next())
 			{
-				allFilmTitles.add(myRslt.getString("title")+"    @id::"+myRslt.getString("film_id"));
+				allFilmTitles.add(concatTitleCaseString(myRslt.getString("title").split(" "))+"    @id::"+myRslt.getString("film_id"));
 			}
 			closeConnection();
 			return allFilmTitles;
@@ -288,6 +291,37 @@ public class DbConnection
 
 	}
 
+	
+	
+	public static Vector<String> getAllActors() throws SQLException{
+		Vector<String> allActors = new Vector<String>();
+		try {
+			getConnection();
+			myRslt = myStmt.executeQuery("Select first_name,last_name from actor");
+			//Step 4: PROCESS the myRslt result set object using a while loop
+			while(myRslt.next())
+			{
+				allActors.add(concatTitleCaseString(myRslt.getString("first_name"),myRslt.getString("last_name")));
+			}
+			closeConnection();
+			return allActors;
+		}catch(SQLException e1)
+		{
+			System.out.println("SQL Exeption, message is: " + e1.getMessage());
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Some other Exception, message is: " + ex.getMessage());
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+
+	}
+	
+	
 	public static int getRentalDurationForFilm(int filmID) throws SQLException {
 		int filmDUration=-1;
 		try {
@@ -340,8 +374,7 @@ public class DbConnection
 		String returnValue="";
 		try {
 			getConnection();
-			myRslt = myStmt.executeQuery("select CONCAT( CONCAT(UCASE(LEFT(first_name, 1)), LCASE(SUBSTRING(first_name, 2))), ' ' ,"
-					+ " CONCAT(UCASE(LEFT(last_name, 1)), LCASE(SUBSTRING(last_name, 2)))) as name,Total_Rental from"
+			myRslt = myStmt.executeQuery("select first_name,last_name Total_Rental from"
 					+ " customer inner join (select count(*) as 'Total_Rental',customer_id from rental"
 					+ " inner join inventory on rental.inventory_id = inventory.inventory_id"
 					+ whereClause
@@ -350,8 +383,7 @@ public class DbConnection
 			
 			myRslt.next();
 			returnValue+=myRslt.getString("name")+" who rented "+myRslt.getInt("Total_Rental")+" times and\n\t\t";
-			myRslt = myStmt.executeQuery("select CONCAT( CONCAT(UCASE(LEFT(first_name, 1)), LCASE(SUBSTRING(first_name, 2))), ' ' ,"
-					+ " CONCAT(UCASE(LEFT(last_name, 1)), LCASE(SUBSTRING(last_name, 2)))) as name,Total_Spent from"
+			myRslt = myStmt.executeQuery("select first_name,last_name,Total_Spent from"
 					+ " customer inner join (select sum(amount) as 'Total_Spent',payment.customer_id from payment"
 					+ " inner join rental on payment.rental_id = rental.rental_id"
 					+ " inner join inventory on rental.inventory_id = inventory.inventory_id"
@@ -360,7 +392,8 @@ public class DbConnection
 					+ " on customer.customer_id = rental.customer_id");	
 
 			myRslt.next();
-			returnValue+=myRslt.getString("name")+" who spent $"+myRslt.getFloat("Total_Spent");
+			returnValue+=concatTitleCaseString(myRslt.getString("first_name"),myRslt.getString("last_name"))
+										+" who spent $"+myRslt.getFloat("Total_Spent");
 		}
 		catch(Exception ex)
 		{
@@ -647,5 +680,12 @@ public class DbConnection
 		return returnID;
 	}
 
+	
+	private static String concatTitleCaseString(String... values) {
+		String returnValue="";
+		for(String value : values)
+			returnValue+=value.toUpperCase().charAt(0) + value.toLowerCase().substring(1) +" ";
+		return returnValue.trim();
+	}
 }
 //end class
