@@ -1,9 +1,8 @@
 package GUI;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class Gui_Interface extends JFrame
 {
 
