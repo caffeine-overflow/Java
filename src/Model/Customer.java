@@ -1,6 +1,6 @@
 /**
  * Program Name	: Customer.java
- * Purpose			: .................
+ * Purpose			: A POJO to store Customer object
  * Author				: Prabin Gyawali (0877282)
  * Date					: Aug. 2, 2020
  */
@@ -98,6 +98,6 @@ public class Customer
 	{
 		this.active = active;
 	}
-	
-	
+
+
 }

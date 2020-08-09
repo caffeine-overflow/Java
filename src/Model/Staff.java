@@ -1,3 +1,9 @@
+/**
+ * Program Name	: Staff.java
+ * Purpose			: A POJO to store Staff object
+ * Author				: Prabin Gyawali (0877282)
+ * Date					: Aug. 5, 2020
+ */
 package Model;
 
 public class Staff
@@ -137,6 +143,6 @@ public class Staff
 	{
 		this.password = password;
 	}
-	
-	
+
+
 }
