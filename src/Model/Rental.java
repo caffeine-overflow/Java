@@ -1,6 +1,6 @@
 /**
  * Program Name	: Rental.java
- * Purpose			: .................
+ * Purpose			: A POJO to store Rental object
  * Author				: Prabin Gyawali (0877282)
  * Date					: Aug. 5, 2020
  */

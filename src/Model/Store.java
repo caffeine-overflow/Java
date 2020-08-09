@@ -1,6 +1,6 @@
 /**
  * Program Name	: Store.java
- * Purpose			: .................
+ * Purpose			: A POJO to store 'Store' Object
  * Author				: Prabin Gyawali (0877282)
  * Date					: Aug. 2, 2020
  */
@@ -38,5 +38,5 @@ public class Store
 	{
 		this.address = address;
 	}
-	
+
 }

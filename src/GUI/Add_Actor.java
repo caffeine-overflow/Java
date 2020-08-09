@@ -1,3 +1,10 @@
+/**
+ * Program Name	: Add_Actor.java
+ * Purpose			: A panel to add a new actor
+ * Author				: Prabin Gyawali (0877282) and Danish Davish (0691688)
+ * Date					: Aug. 2, 2020
+ */
+
 package GUI;
 
 import java.awt.*;
@@ -12,15 +19,17 @@ import static Validator.SakilaValidator.*;
 
 @SuppressWarnings("serial")
 public class Add_Actor extends JPanel {
-	JButton addActorBtn, clearActorBtn;
-	JTextField actorFirstNameFld, actorLastNameFld;
-	JPanel centerPanel;
+
+	//declare required components
+	private JButton addActorBtn, clearActorBtn;
+	private JTextField actorFirstNameFld, actorLastNameFld;
+	private JPanel centerPanel;
 	// constructor
 	public Add_Actor() {
 		super();
-		this.setBorder(new EmptyBorder(10, 10, 10, 10));
-
 		/***********************************************************************************/
+		//initilize and add the components
+		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		centerPanel = new JPanel();
 		centerPanel.setLayout(new GridLayout(2, 2, 30, 30));
 		this.add(centerPanel);
@@ -53,29 +62,34 @@ public class Add_Actor extends JPanel {
 		btnPanel.add(addActorBtn);
 		btnPanel.add(clearActorBtn);
 	}
-	
-	
-//create inner class listener object
+
+
+	/**
+	 * Action listener for Add Actor Page
+	 */
 	private class AddActorPage implements ActionListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			if(e.getActionCommand().equals("Add"))
+			if(e.getActionCommand().equals("Add")) //If Add button is clicked
 			{			  
+				//validate all the text fields
 				if(areTextFieldValid(actorFirstNameFld,actorLastNameFld)) {
+					//create a actor object and get the information.
 					Actor actor = new Actor();
 					actor.setFirstName(actorFirstNameFld.getText());
-					actor.setLastName(actorLastNameFld.getText());
+					actor.setLastName(actorLastNameFld.getText()); 
 					try
 					{
-						validateActor(actor);
+						validateActor(actor); //validate the actor object
+						//Insert the actor
 						if(insertActor(actor)==-2)
 							JOptionPane.showMessageDialog(null, "Mr. "+actor.getFirstName()+" already exists in our database", "Warning", JOptionPane.WARNING_MESSAGE);
 						else
 							JOptionPane.showMessageDialog(null, "Successfully inserted Mr. "+actor.getFirstName(), "Success", JOptionPane.INFORMATION_MESSAGE);
 						clearPanel(centerPanel);
-					
+
 					}  catch (Exception e1)
 					{
 						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -84,11 +98,11 @@ public class Add_Actor extends JPanel {
 				else {
 					JOptionPane.showMessageDialog(null, "Please enter the value in all required fields", "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				
-			}else if(e.getActionCommand().equals("Clear"))
+
+			}else if(e.getActionCommand().equals("Clear")) //if clear button clicked, clear the panel
 				clearPanel(centerPanel);
-			
+
 		}//end actionPerformed()
-	
+
 	}//end inner class
 }

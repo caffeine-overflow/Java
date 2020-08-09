@@ -1,3 +1,9 @@
+/**
+ * Program Name	: Film.java
+ * Purpose			: A POJO to store Film object
+ * Author				: Prabin Gyawali (0877282)
+ * Date					: Aug. 2, 2020
+ */
 package Model;
 
 public class Film
@@ -242,5 +248,5 @@ public class Film
 	{
 		this.stringReplacement_cost = stringReplacement_cost;
 	}
-		
+
 }
